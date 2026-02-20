@@ -7,72 +7,31 @@
   <meta name="description" content="Register or log in to JEOQ." />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <header class="site-header">
-    <nav class="navbar" aria-label="Main navigation">
-      <a class="brand" href="index.html" aria-label="JEOQ home">
-        <img src="assets/jeoq-logo.svg" alt="JEOQ logo" class="brand-logo" />
-        <span class="brand-text">JEOQ</span>
-      </a>
-
-      <div class="nav-right">
-        <ul class="nav-links">
-          <li><a href="register.html" aria-current="page">Register</a></li>
-          <li><a href="index.html">App</a></li>
-          <li><a href="plans.html">Plans</a></li>
-        </ul>
-        <a class="profile-link" href="profile.html" aria-label="Open profile page">
-          <span class="profile-icon" aria-hidden="true">👤</span>
-          <img id="nav-avatar" class="nav-avatar" src="assets/jeoq-logo.svg" alt="Profile picture" />
-        </a>
-      </div>
-    </nav>
-  </header>
-
-  <main class="page-wrap">
-    <section class="hero card">
-      <h1>Start with Registration</h1>
-      <p>New users should register first. Existing users can log in below.</p>
-    </section>
-
+<body class="auth-only-body">
+  <main class="auth-only-wrap">
     <section class="card" id="auth">
-      <h2>Account Access</h2>
-      <p class="section-intro">New accounts are automatically created on the Free plan.</p>
-      <div class="auth-grid">
-        <form class="auth-form" data-auth="register">
-          <h3>Register</h3>
-          <label>
-            Username
-            <input type="text" name="username" required />
-          </label>
-          <label>
-            Name
-            <input type="text" name="name" required />
-          </label>
-          <label>
-            Email
-            <input type="email" name="email" required />
-          </label>
-          <label>
-            Password
-            <input type="password" name="password" required />
-          </label>
-          <button type="submit">Create Account (Free)</button>
-        </form>
-
-        <form class="auth-form" data-auth="login">
-          <h3>Log In</h3>
-          <label>
-            Username
-            <input type="text" name="username" required />
-          </label>
-          <label>
-            Password
-            <input type="password" name="password" required />
-          </label>
-          <button type="submit">Log In</button>
-        </form>
-      </div>
+      <h1>Start with Registration</h1>
+      <p class="section-intro">This is the first and only screen for brand-new users. New accounts are automatically created on the Free plan.</p>
+      <form class="auth-form" data-auth="register">
+        <label>
+          Username
+          <input type="text" name="username" required />
+        </label>
+        <label>
+          Name
+          <input type="text" name="name" required />
+        </label>
+        <label>
+          Email
+          <input type="email" name="email" required />
+        </label>
+        <label>
+          Password
+          <input type="password" name="password" required />
+        </label>
+        <button type="submit">Create Account (Free)</button>
+      </form>
+      <p class="section-intro">Returning users can log in from the profile page when prompted.</p>
     </section>
 
     <p class="status" id="auth-status" aria-live="polite"></p>
