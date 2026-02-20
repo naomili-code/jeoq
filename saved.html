@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JEOQ | Sound</title>
-  <meta name="description" content="Sound details and content list on JEOQ." />
+  <title>JEOQ | Saved</title>
+  <meta name="description" content="View your liked and favorited content on JEOQ." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -17,7 +17,7 @@
 
       <div class="nav-right">
         <ul class="nav-links">
-          <li><a href="saved.html">Saved</a></li>
+          <li><a href="saved.html" aria-current="page">Saved</a></li>
           <li><a href="plans.html">Plans</a></li>
         </ul>
         <a class="profile-link" href="profile.html" aria-label="Open profile page">
@@ -29,20 +29,19 @@
   </header>
 
   <main class="page-wrap">
-    <section class="card sound-header" id="sound-page">
-      <div class="sound-head">
-        <img id="sound-photo" class="sound-photo" src="assets/jeoq-logo.svg" alt="Sound icon" />
-        <div>
-          <h1 id="sound-name">Sound Name</h1>
-          <p id="sound-creator" class="section-intro">By @creator</p>
-          <p class="section-intro"><strong id="sound-count">0</strong> contents made with this sound</p>
-        </div>
-      </div>
+    <section class="card">
+      <h1>Saved Activity</h1>
+      <p class="section-intro">Accessible list of content you liked and favorited.</p>
     </section>
 
     <section class="card">
-      <h2>Content Using This Sound (Most Likes First)</h2>
-      <div id="sound-content-list" class="sound-list"></div>
+      <h2>Liked</h2>
+      <div id="liked-list" class="saved-list" role="list"></div>
+    </section>
+
+    <section class="card">
+      <h2>Favorited</h2>
+      <div id="favorite-list" class="saved-list" role="list"></div>
     </section>
 
     <p class="status" id="status" aria-live="polite"></p>

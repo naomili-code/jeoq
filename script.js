@@ -6,6 +6,8 @@ const authStatus = document.getElementById("auth-status");
 const STORAGE_KEYS = {
 	users: "jeoq-users",
 	currentUser: "jeoq-current-user",
+	liked: "jeoq-liked-items",
+	favorited: "jeoq-favorited-items",
 };
 
 const STALE_DAYS = 14;
@@ -129,6 +131,30 @@ function getCurrentUser() {
 	return { key: userKey, data: users[userKey] };
 }
 
+function loadMapStorage(key) {
+	try {
+		const raw = localStorage.getItem(key);
+		return raw ? JSON.parse(raw) : {};
+	} catch {
+		return {};
+	}
+}
+
+function saveMapStorage(key, value) {
+	localStorage.setItem(key, JSON.stringify(value));
+}
+
+function getSavedItemsForUser(storageKey, userKey) {
+	const store = loadMapStorage(storageKey);
+	return Array.isArray(store[userKey]) ? store[userKey] : [];
+}
+
+function setSavedItemsForUser(storageKey, userKey, items) {
+	const store = loadMapStorage(storageKey);
+	store[userKey] = items;
+	saveMapStorage(storageKey, store);
+}
+
 function makeAvatarDataUrl(username) {
 	const safeText = (username || "U").charAt(0).toUpperCase();
 	const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><rect width="96" height="96" rx="20" fill="#8ecae6"/><text x="48" y="60" text-anchor="middle" font-size="44" font-family="Segoe UI, Arial, sans-serif" font-weight="700" fill="#163547">${safeText}</text></svg>`;
@@ -242,7 +268,20 @@ function bindContentActions() {
 			}
 
 			touchLogin(current.key);
-			const action = button.dataset.action?.replace(/-/g, " ");
+			const actionKey = button.dataset.action || "";
+			const post = button.closest(".video-post");
+			if (post && (actionKey === "like" || actionKey === "favorite")) {
+				const contentId = post.dataset.contentId || "unknown";
+				const contentTitle = post.dataset.contentTitle || "Untitled content";
+				const storageKey = actionKey === "like" ? STORAGE_KEYS.liked : STORAGE_KEYS.favorited;
+				const existing = getSavedItemsForUser(storageKey, current.key);
+				if (!existing.some((item) => item.id === contentId)) {
+					existing.push({ id: contentId, title: contentTitle });
+					setSavedItemsForUser(storageKey, current.key, existing);
+				}
+			}
+
+			const action = actionKey.replace(/-/g, " ");
 			setStatus(status, `Action received: ${action}.`);
 		});
 	});
@@ -274,7 +313,7 @@ function bindPublishForm() {
 }
 
 function bindPublishToggle() {
-	const openButtons = document.querySelectorAll("#open-publish, [data-open-publish='true']");
+	const openButtons = document.querySelectorAll("#open-publish");
 	const closeButton = document.getElementById("close-publish");
 	const publishPanel = document.getElementById("publish-panel");
 
@@ -514,6 +553,38 @@ function renderSoundPage() {
 	}
 }
 
+function renderSavedPage() {
+	const likedList = document.getElementById("liked-list");
+	const favoriteList = document.getElementById("favorite-list");
+	if (!likedList || !favoriteList) {
+		return;
+	}
+
+	const current = getCurrentUser();
+	if (!current) {
+		likedList.innerHTML = '<p class="saved-empty">Log in to view your liked content.</p>';
+		favoriteList.innerHTML = '<p class="saved-empty">Log in to view your favorited content.</p>';
+		return;
+	}
+
+	const likedItems = getSavedItemsForUser(STORAGE_KEYS.liked, current.key);
+	const favoriteItems = getSavedItemsForUser(STORAGE_KEYS.favorited, current.key);
+
+	function renderItems(container, items, label) {
+		if (items.length === 0) {
+			container.innerHTML = `<p class="saved-empty">No ${label.toLowerCase()} content yet.</p>`;
+			return;
+		}
+
+		container.innerHTML = items
+			.map((item, index) => `<article class="saved-item" role="listitem"><p><strong>${label} ${index + 1}</strong></p><p>${item.title}</p></article>`)
+			.join("");
+	}
+
+	renderItems(likedList, likedItems, "Liked");
+	renderItems(favoriteList, favoriteItems, "Favorite");
+}
+
 updateNavAvatar();
 ensureNewUsersStartAtRegister();
 bindAuthForms();
@@ -525,3 +596,4 @@ bindFeedTabs();
 renderProfilePage();
 renderCreatorPage();
 renderSoundPage();
+renderSavedPage();
