@@ -181,19 +181,18 @@ body {
 .feed-column {
   display: grid;
   gap: 1rem;
+  height: calc(100vh - 110px);
   max-height: calc(100vh - 110px);
   overflow-y: auto;
   scroll-snap-type: y mandatory;
+  overscroll-behavior-y: contain;
   padding-right: 0.35rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .feed-column::-webkit-scrollbar {
-  width: 8px;
-}
-
-.feed-column::-webkit-scrollbar-thumb {
-  background: #c7b08a;
-  border-radius: 999px;
+  display: none;
 }
 
 .feed-switch {
@@ -226,14 +225,17 @@ body {
 
 .video-post {
   display: grid;
+  grid-template-rows: 1fr auto auto;
   gap: 0.7rem;
   scroll-snap-align: start;
+  scroll-snap-stop: always;
   min-height: calc(100vh - 140px);
 }
 
 .video-frame {
   border-radius: 14px;
-  min-height: min(68vh, 560px);
+  min-height: 0;
+  height: 100%;
   background: linear-gradient(160deg, #2d3453, #191d2c 70%);
   position: relative;
   padding: 0.9rem;
@@ -513,9 +515,10 @@ button:focus-visible {
   }
 
   .feed-column {
-    max-height: none;
-    overflow: visible;
-    scroll-snap-type: none;
+    height: calc(100vh - 130px);
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
     padding-right: 0;
   }
 
@@ -526,11 +529,12 @@ button:focus-visible {
   }
 
   .video-post {
-    min-height: auto;
+    min-height: calc(100vh - 170px);
   }
 
   .video-frame {
-    min-height: 70vh;
+    min-height: 0;
+    height: 100%;
   }
 
   .right-rail {
