@@ -53,6 +53,26 @@ body {
   color: var(--text);
 }
 
+.back-to-feed {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  text-decoration: none;
+  font-weight: 800;
+  color: var(--text);
+  border: 1px solid #e7d3b9;
+  background: #fffdf8;
+}
+
+.back-to-feed:hover,
+.back-to-feed:focus-visible {
+  background: var(--accent);
+  color: #1f120f;
+  outline: none;
+}
+
 .brand-logo {
   width: 40px;
   height: 40px;
