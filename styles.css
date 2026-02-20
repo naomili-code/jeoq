@@ -5,6 +5,7 @@
   --accent: #ffb703;
   --accent-2: #fb8500;
   --accent-3: #8ecae6;
+  --border: #ffd166;
 }
 
 * {
@@ -85,9 +86,7 @@ body {
 }
 
 .hero {
-  max-width: 1100px;
-  margin: 2.8rem auto;
-  padding: 0 1.2rem;
+  margin: 0;
 }
 
 .hero h1 {
@@ -101,6 +100,129 @@ body {
   line-height: 1.6;
 }
 
+.page-wrap {
+  max-width: 1100px;
+  margin: 2rem auto 3rem;
+  padding: 0 1.2rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.section-intro {
+  margin-top: 0;
+  color: #5b4063;
+}
+
+h2,
+h3 {
+  margin-top: 0;
+}
+
+.auth-grid,
+.action-grid,
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.auth-form,
+.publish-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  border: 1px solid #dfc39f;
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem;
+  background: #fffdf8;
+  color: var(--text);
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent-2);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.55rem 0.9rem;
+  cursor: pointer;
+}
+
+button:hover,
+button:focus-visible {
+  filter: brightness(1.06);
+  outline: none;
+}
+
+.item-box {
+  border: 1px solid #e7d3b9;
+  border-radius: 12px;
+  padding: 0.85rem;
+  background: #fffdfa;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  background: var(--accent-3);
+  color: #163547;
+}
+
+.status {
+  margin: 0;
+  font-weight: 700;
+  color: #43334a;
+  min-height: 1.5rem;
+}
+
+.plan-card ul {
+  margin-top: 0.35rem;
+  padding-left: 1.1rem;
+}
+
+.price {
+  margin: 0.35rem 0 0.3rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.featured {
+  border-color: var(--accent-2);
+}
+
+.plan-btn {
+  margin-top: 0.35rem;
+}
+
 @media (max-width: 700px) {
   .navbar {
     flex-direction: column;
@@ -110,5 +232,11 @@ body {
   .nav-links {
     flex-wrap: wrap;
     gap: 0.55rem;
+  }
+
+  .auth-grid,
+  .action-grid,
+  .plan-grid {
+    grid-template-columns: 1fr;
   }
 }
