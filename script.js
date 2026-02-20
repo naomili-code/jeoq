@@ -762,6 +762,37 @@ function bindFeedTabs() {
 	});
 }
 
+function bindVideoArrowNavigation() {
+	if (window.__jeoqArrowNavBound) {
+		return;
+	}
+	window.__jeoqArrowNavBound = true;
+
+	document.addEventListener("keydown", (event) => {
+		if (event.key !== "ArrowDown" && event.key !== "ArrowUp") {
+			return;
+		}
+
+		const activeTag = String(document.activeElement?.tagName || "").toLowerCase();
+		const isTypingField = activeTag === "input" || activeTag === "textarea" || activeTag === "select" || document.activeElement?.isContentEditable;
+		if (isTypingField) {
+			return;
+		}
+
+		const feedColumn = document.querySelector(".feed-column");
+		const direction = event.key === "ArrowDown" ? 1 : -1;
+		event.preventDefault();
+
+		if (feedColumn) {
+			const step = Math.max(220, Math.floor(feedColumn.clientHeight * 0.9));
+			feedColumn.scrollBy({ top: direction * step, behavior: "smooth" });
+			return;
+		}
+
+		window.scrollBy({ top: direction * Math.floor(window.innerHeight * 0.8), behavior: "smooth" });
+	});
+}
+
 function renderProfilePage() {
 	const profileCard = document.getElementById("profile-card");
 	if (!profileCard) {
@@ -1014,6 +1045,7 @@ bindPublishForm();
 bindPublishToggle();
 bindPlanButtons();
 bindFeedTabs();
+bindVideoArrowNavigation();
 renderProfilePage();
 renderCreatorPage();
 renderSoundPage();
