@@ -242,7 +242,7 @@ body {
 
 .video-post {
   display: grid;
-  width: min(100%, 560px);
+  width: min(100%, 460px);
   gap: 0.62rem;
   scroll-snap-align: start;
   scroll-snap-stop: always;
@@ -250,7 +250,8 @@ body {
 
 .video-frame {
   border-radius: 14px;
-  min-height: clamp(360px, 62vh, 560px);
+  aspect-ratio: 9 / 16;
+  min-height: 0;
   background: linear-gradient(160deg, #2d3453, #171b2d 70%);
   position: relative;
   padding: 0.85rem;
@@ -669,21 +670,20 @@ button:focus-visible {
     height: calc(100vh - 130px);
     max-height: calc(100vh - 130px);
     padding-right: 0;
-    justify-items: stretch;
+    justify-items: center;
   }
 
   .feed-switch {
-    position: sticky;
-    top: 62px;
-    z-index: 12;
+    position: static;
+    z-index: auto;
   }
 
   .video-post {
-    width: 100%;
+    width: min(100%, 380px);
   }
 
   .video-frame {
-    min-height: clamp(340px, 58vh, 500px);
+    min-height: 0;
   }
 
   .icon-action {
