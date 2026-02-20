@@ -15,25 +15,30 @@
         <span class="brand-text">JEOQ</span>
       </a>
 
-      <ul class="nav-links">
-        <li><a href="index.html" aria-current="page">App</a></li>
-        <li><a href="plans.html">Plans</a></li>
-      </ul>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="index.html" aria-current="page">App</a></li>
+          <li><a href="plans.html">Plans</a></li>
+        </ul>
+        <a class="profile-link" href="profile.html" aria-label="Open profile page">
+          <span class="profile-icon" aria-hidden="true">👤</span>
+          <img id="nav-avatar" class="nav-avatar" src="assets/jeoq-logo.svg" alt="Profile picture" />
+        </a>
+      </div>
     </nav>
   </header>
 
   <main class="page-wrap">
-    <section class="hero card">
-      <h1>Comedy starts here.</h1>
-      <p>JEOQ is built for funny content and entertainment. Users can register, log in, share posts/videos, and interact with creators and content.</p>
-    </section>
-
     <section class="card" id="auth">
       <h2>Account Access</h2>
-      <p class="section-intro">New users are automatically on the Free plan after sign up.</p>
+      <p class="section-intro">Register is the first step for new users. New accounts are automatically set to the Free plan.</p>
       <div class="auth-grid">
         <form class="auth-form" data-auth="register">
           <h3>Register</h3>
+          <label>
+            Username
+            <input type="text" name="username" required />
+          </label>
           <label>
             Name
             <input type="text" name="name" required />
@@ -52,8 +57,8 @@
         <form class="auth-form" data-auth="login">
           <h3>Log In</h3>
           <label>
-            Email
-            <input type="email" name="email" required />
+            Username
+            <input type="text" name="username" required />
           </label>
           <label>
             Password
@@ -62,6 +67,11 @@
           <button type="submit">Log In</button>
         </form>
       </div>
+    </section>
+
+    <section class="hero card">
+      <h1>Comedy starts here.</h1>
+      <p>JEOQ is built for funny content and entertainment. Users can log in, share posts/videos, and interact with creators and content.</p>
     </section>
 
     <section class="card" id="actions">
