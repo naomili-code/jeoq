@@ -688,10 +688,16 @@ button:focus-visible {
 }
 
 .media-preview-wrap {
+  position: relative;
   border: 1px solid #d8bc97;
   border-radius: 10px;
   overflow: hidden;
   background: #111421;
+}
+
+.media-preview-wrap.is-recording {
+  border-color: #f95b5b;
+  box-shadow: 0 0 0 2px rgba(249, 91, 91, 0.22);
 }
 
 .media-preview {
@@ -700,6 +706,21 @@ button:focus-visible {
   display: block;
   object-fit: cover;
   background: #111421;
+}
+
+.recording-indicator {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  margin: 0;
+  z-index: 2;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(200, 27, 27, 0.88);
+  border-radius: 999px;
+  padding: 0.2rem 0.48rem;
+  letter-spacing: 0.04em;
 }
 
 .is-hidden {

@@ -74,6 +74,32 @@
               Upload Video
               <input id="video-upload" type="file" name="videoFile" accept="video/*" />
             </label>
+            <label>
+              Existing Sound
+              <select id="existing-sound" name="existingSound">
+                <option value="office_legend">Office Legend Beat</option>
+                <option value="pov_pun">POV Pun Track</option>
+              </select>
+            </label>
+            <label>
+              Video Length
+              <select id="video-length" name="videoLength">
+                <option value="10">10 seconds</option>
+                <option value="30">30 seconds</option>
+                <option value="60" selected>1 minute</option>
+                <option value="600">10 minutes</option>
+              </select>
+            </label>
+            <label>
+              Filter
+              <select id="video-filter" name="videoFilter">
+                <option value="none" selected>None</option>
+                <option value="warm">Warm</option>
+                <option value="cool">Cool</option>
+                <option value="bw">Black &amp; White</option>
+                <option value="vivid">Vivid</option>
+              </select>
+            </label>
             <div class="media-actions" role="group" aria-label="Camera and microphone recording controls">
               <button id="start-recording" type="button">Start Recording</button>
               <button id="stop-recording" type="button" disabled>Stop Recording</button>
@@ -81,6 +107,7 @@
             </div>
             <p id="recording-status" class="status media-status" aria-live="polite"></p>
             <div id="media-preview-wrap" class="media-preview-wrap is-hidden" aria-live="polite">
+              <p id="recording-indicator" class="recording-indicator is-hidden">● REC</p>
               <video id="media-preview" class="media-preview" controls playsinline muted></video>
             </div>
           </div>

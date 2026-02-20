@@ -197,6 +197,18 @@ function getSoundLabel(soundKey) {
 	return SOUND_DIRECTORY[soundKey]?.name || "Sound";
 }
 
+function getVideoFilterCss(filterKey) {
+	const filters = {
+		none: "none",
+		warm: "saturate(1.1) sepia(0.2) hue-rotate(-6deg)",
+		cool: "saturate(1.05) hue-rotate(18deg)",
+		bw: "grayscale(1)",
+		vivid: "contrast(1.12) saturate(1.35)",
+	};
+
+	return filters[filterKey] || "none";
+}
+
 function tagLinkHtml(tag) {
 	const normalized = normalizeTag(tag);
 	return `<a class="hashtag-link" href="hashtags.html?tag=${encodeURIComponent(normalized)}">#${normalized}</a>`;
@@ -212,12 +224,13 @@ function renderFeed() {
 	feedList.innerHTML = posts
 		.map((post) => {
 			const hasMedia = Boolean(post.mediaDataUrl);
+			const videoFilterCss = getVideoFilterCss(post.videoFilter || "none");
 			const frameClass = ["video-frame", post.style === "alt" ? "alt" : "", hasMedia ? "has-media" : ""]
 				.filter(Boolean)
 				.join(" ");
 			const hashtagHtml = (post.hashtags || []).map(tagLinkHtml).join(" ");
 			const mediaHtml = hasMedia
-				? `<video class="post-video" playsinline controls preload="metadata" src="${post.mediaDataUrl}"></video>`
+				? `<video class="post-video" style="filter:${videoFilterCss};" playsinline controls preload="metadata" src="${post.mediaDataUrl}"></video>`
 				: "";
 			return `<article class="video-post card-dark" data-content-id="${post.id}" data-content-title="${post.title}">
 				<div class="${frameClass}">
@@ -271,8 +284,12 @@ function bindPublishMediaTools() {
 	const recordingStatus = document.getElementById("recording-status");
 	const previewWrap = document.getElementById("media-preview-wrap");
 	const preview = document.getElementById("media-preview");
+	const soundSelect = document.getElementById("existing-sound");
+	const lengthSelect = document.getElementById("video-length");
+	const filterSelect = document.getElementById("video-filter");
+	const recordingIndicator = document.getElementById("recording-indicator");
 
-	if (!uploadInput || !startButton || !stopButton || !clearButton || !recordingStatus || !previewWrap || !preview) {
+	if (!uploadInput || !startButton || !stopButton || !clearButton || !recordingStatus || !previewWrap || !preview || !soundSelect || !lengthSelect || !filterSelect || !recordingIndicator) {
 		return;
 	}
 
@@ -283,6 +300,12 @@ function bindPublishMediaTools() {
 		stream: null,
 		recorder: null,
 		chunks: [],
+		selectedSound: String(soundSelect.value || "office_legend"),
+		selectedLengthSec: Number(lengthSelect.value || 60),
+		selectedFilter: String(filterSelect.value || "none"),
+		recordTimeout: null,
+		recordCountdownTimer: null,
+		recordEndsAt: 0,
 	};
 
 	window.__jeoqPublishMediaState = mediaState;
@@ -301,6 +324,33 @@ function bindPublishMediaTools() {
 		}
 	}
 
+	function clearRecordTimers() {
+		if (mediaState.recordTimeout) {
+			window.clearTimeout(mediaState.recordTimeout);
+			mediaState.recordTimeout = null;
+		}
+		if (mediaState.recordCountdownTimer) {
+			window.clearInterval(mediaState.recordCountdownTimer);
+			mediaState.recordCountdownTimer = null;
+		}
+		mediaState.recordEndsAt = 0;
+	}
+
+	function updateRecordingIndicator(isRecording) {
+		if (isRecording) {
+			recordingIndicator.classList.remove("is-hidden");
+			previewWrap.classList.add("is-recording");
+			return;
+		}
+
+		recordingIndicator.classList.add("is-hidden");
+		previewWrap.classList.remove("is-recording");
+	}
+
+	function applyPreviewFilter(filterKey) {
+		preview.style.filter = getVideoFilterCss(filterKey);
+	}
+
 	function showPreviewWithSrc(src, muted = false) {
 		preview.srcObject = null;
 		preview.src = src;
@@ -312,6 +362,8 @@ function bindPublishMediaTools() {
 		mediaState.uploadFile = null;
 		mediaState.recordedDataUrl = "";
 		mediaState.chunks = [];
+		clearRecordTimers();
+		updateRecordingIndicator(false);
 		clearPreviewUrl();
 		preview.pause();
 		preview.removeAttribute("src");
@@ -319,6 +371,7 @@ function bindPublishMediaTools() {
 		preview.load();
 		uploadInput.value = "";
 		previewWrap.classList.add("is-hidden");
+		applyPreviewFilter(mediaState.selectedFilter);
 		setStatus(recordingStatus, "No video selected yet.");
 	}
 
@@ -327,12 +380,14 @@ function bindPublishMediaTools() {
 			return;
 		}
 
+		clearRecordTimers();
 		await new Promise((resolve) => {
 			mediaState.recorder.addEventListener("stop", resolve, { once: true });
 			mediaState.recorder.stop();
 		});
 
 		stopTracks();
+		updateRecordingIndicator(false);
 		startButton.disabled = false;
 		stopButton.disabled = true;
 
@@ -346,11 +401,34 @@ function bindPublishMediaTools() {
 		clearPreviewUrl();
 		mediaState.previewUrl = URL.createObjectURL(blob);
 		showPreviewWithSrc(mediaState.previewUrl, false);
+		applyPreviewFilter(mediaState.selectedFilter);
 		mediaState.recordedDataUrl = await fileToDataUrl(blob);
 		mediaState.uploadFile = null;
 		uploadInput.value = "";
-		setStatus(recordingStatus, "Recording ready. Publish to post this video.");
+		setStatus(recordingStatus, `Recording ready with ${getSoundLabel(mediaState.selectedSound)}.`);
 	}
+
+	function syncSelectionsFromControls() {
+		mediaState.selectedSound = String(soundSelect.value || "office_legend");
+		mediaState.selectedFilter = String(filterSelect.value || "none");
+		mediaState.selectedLengthSec = Number(lengthSelect.value || 60);
+		applyPreviewFilter(mediaState.selectedFilter);
+	}
+
+	Object.keys(SOUND_DIRECTORY).forEach((soundKey) => {
+		if ([...soundSelect.options].some((option) => option.value === soundKey)) {
+			return;
+		}
+		const option = document.createElement("option");
+		option.value = soundKey;
+		option.textContent = getSoundLabel(soundKey);
+		soundSelect.appendChild(option);
+	});
+
+	soundSelect.addEventListener("change", syncSelectionsFromControls);
+	lengthSelect.addEventListener("change", syncSelectionsFromControls);
+	filterSelect.addEventListener("change", syncSelectionsFromControls);
+	syncSelectionsFromControls();
 
 	uploadInput.addEventListener("change", () => {
 		const selected = uploadInput.files?.[0] || null;
@@ -359,7 +437,10 @@ function bindPublishMediaTools() {
 			return;
 		}
 
+		syncSelectionsFromControls();
 		stopTracks();
+		updateRecordingIndicator(false);
+		clearRecordTimers();
 		startButton.disabled = false;
 		stopButton.disabled = true;
 
@@ -368,12 +449,16 @@ function bindPublishMediaTools() {
 		clearPreviewUrl();
 		mediaState.previewUrl = URL.createObjectURL(selected);
 		showPreviewWithSrc(mediaState.previewUrl, true);
-		setStatus(recordingStatus, `Selected upload: ${selected.name}`);
+		applyPreviewFilter(mediaState.selectedFilter);
+		setStatus(recordingStatus, `Selected upload: ${selected.name}. Sound: ${getSoundLabel(mediaState.selectedSound)}.`);
 	});
 
 	startButton.addEventListener("click", async () => {
 		try {
+			syncSelectionsFromControls();
 			stopTracks();
+			clearRecordTimers();
+			updateRecordingIndicator(false);
 			const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 			mediaState.stream = stream;
 			mediaState.recorder = new MediaRecorder(stream);
@@ -391,14 +476,35 @@ function bindPublishMediaTools() {
 
 			preview.srcObject = stream;
 			preview.muted = true;
+			applyPreviewFilter(mediaState.selectedFilter);
 			preview.play().catch(() => {});
 			previewWrap.classList.remove("is-hidden");
 			mediaState.recorder.start();
+			updateRecordingIndicator(true);
 			startButton.disabled = true;
 			stopButton.disabled = false;
-			setStatus(recordingStatus, "Recording in progress… click Stop Recording when done.");
+
+			const totalSeconds = Math.max(1, mediaState.selectedLengthSec);
+			mediaState.recordEndsAt = Date.now() + totalSeconds * 1000;
+			setStatus(recordingStatus, `Recording live (${totalSeconds}s max) with ${getSoundLabel(mediaState.selectedSound)}.`);
+
+			mediaState.recordTimeout = window.setTimeout(() => {
+				stopRecording().catch(() => {
+					setStatus(recordingStatus, "Recording stopped, but finalizing failed. Please try again.");
+				});
+			}, totalSeconds * 1000);
+
+			mediaState.recordCountdownTimer = window.setInterval(() => {
+				const secondsLeft = Math.max(0, Math.ceil((mediaState.recordEndsAt - Date.now()) / 1000));
+				setStatus(recordingStatus, `Recording live: ${secondsLeft}s left (max ${totalSeconds}s).`);
+				if (secondsLeft <= 0) {
+					clearRecordTimers();
+				}
+			}, 1000);
 		} catch {
 			stopTracks();
+			clearRecordTimers();
+			updateRecordingIndicator(false);
 			setStatus(recordingStatus, "Could not access camera/microphone. Check browser permissions and try again.");
 		}
 	});
@@ -406,6 +512,8 @@ function bindPublishMediaTools() {
 	stopButton.addEventListener("click", () => {
 		stopRecording().catch(() => {
 			stopTracks();
+			clearRecordTimers();
+			updateRecordingIndicator(false);
 			startButton.disabled = false;
 			stopButton.disabled = true;
 			setStatus(recordingStatus, "Unable to finalize recording. Please try again.");
@@ -413,6 +521,8 @@ function bindPublishMediaTools() {
 	});
 
 	clearButton.addEventListener("click", () => {
+		clearRecordTimers();
+		updateRecordingIndicator(false);
 		stopTracks();
 		if (mediaState.recorder && mediaState.recorder.state !== "inactive") {
 			mediaState.recorder.stop();
@@ -605,6 +715,8 @@ function bindPublishForm() {
 		const hashtags = parseHashtags(formData.get("hashtags") || "");
 		const creatorHandle = `@${current.data.username || current.key}`;
 		const mediaState = window.__jeoqPublishMediaState || {};
+		const selectedSound = String(formData.get("existingSound") || mediaState.selectedSound || (type === "video" ? "office_legend" : "pov_pun"));
+		const selectedFilter = String(formData.get("videoFilter") || mediaState.selectedFilter || "none");
 
 		let mediaDataUrl = "";
 		if (mediaState.uploadFile) {
@@ -630,8 +742,9 @@ function bindPublishForm() {
 			creator: creatorHandle,
 			creatorKey: normalizeUsername(current.data.username || current.key),
 			hashtags: hashtags.length > 0 ? hashtags : ["#fyp"],
-			sound: type === "video" ? "office_legend" : "pov_pun",
+			sound: selectedSound,
 			style: posts.length % 2 === 0 ? "default" : "alt",
+			videoFilter: selectedFilter,
 			mediaDataUrl,
 		});
 		savePostList(posts);
@@ -643,6 +756,15 @@ function bindPublishForm() {
 			mediaState.uploadFile = null;
 			mediaState.recordedDataUrl = "";
 			mediaState.chunks = [];
+			if (mediaState.recordTimeout) {
+				window.clearTimeout(mediaState.recordTimeout);
+				mediaState.recordTimeout = null;
+			}
+			if (mediaState.recordCountdownTimer) {
+				window.clearInterval(mediaState.recordCountdownTimer);
+				mediaState.recordCountdownTimer = null;
+			}
+			mediaState.recordEndsAt = 0;
 			if (mediaState.previewUrl) {
 				URL.revokeObjectURL(mediaState.previewUrl);
 				mediaState.previewUrl = "";
@@ -657,6 +779,7 @@ function bindPublishForm() {
 			const startButton = document.getElementById("start-recording");
 			const stopButton = document.getElementById("stop-recording");
 			const recordingStatus = document.getElementById("recording-status");
+			const recordingIndicator = document.getElementById("recording-indicator");
 
 			if (uploadInput) {
 				uploadInput.value = "";
@@ -669,6 +792,10 @@ function bindPublishForm() {
 			}
 			if (previewWrap) {
 				previewWrap.classList.add("is-hidden");
+				previewWrap.classList.remove("is-recording");
+			}
+			if (recordingIndicator) {
+				recordingIndicator.classList.add("is-hidden");
 			}
 			if (startButton) {
 				startButton.disabled = false;
@@ -1014,11 +1141,12 @@ function renderHashtagPage() {
 		.map(
 			(post) => {
 				const hasMedia = Boolean(post.mediaDataUrl);
+				const videoFilterCss = getVideoFilterCss(post.videoFilter || "none");
 				const frameClass = ["video-frame", post.style === "alt" ? "alt" : "", hasMedia ? "has-media" : ""]
 					.filter(Boolean)
 					.join(" ");
 				const mediaHtml = hasMedia
-					? `<video class="post-video" playsinline controls preload="metadata" src="${post.mediaDataUrl}"></video>`
+					? `<video class="post-video" style="filter:${videoFilterCss};" playsinline controls preload="metadata" src="${post.mediaDataUrl}"></video>`
 					: `<div class="no-video-placeholder" role="img" aria-label="No uploaded video">No uploaded video</div>`;
 
 				return `<article class="video-post card-dark hashtag-post">
