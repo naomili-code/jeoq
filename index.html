@@ -3,63 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JEOQ | Comedy & Funny Things</title>
-  <meta name="description" content="JEOQ is your home for comedy, jokes, and funny things." />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <header class="site-header">
-    <nav class="navbar" aria-label="Main navigation">
-      <a class="brand" href="index.html" aria-label="JEOQ home">
-        <img src="assets/jeoq-logo.svg" alt="JEOQ logo" class="brand-logo" />
-        <span class="brand-text">JEOQ</span>
-      </a>
+  <main class="app-shell">
+    <aside class="left-rail">
+      <a href="#" class="rail-link active">For You</a>
+      <a href="#" class="rail-link">Following</a>
+      <a href="#publish" class="rail-link">Create</a>
+      <a href="plans.html" class="rail-link">Plans</a>
+      <a href="profile.html" class="rail-link">Profile</a>
+    </aside>
 
-      <div class="nav-right">
-        <ul class="nav-links">
-          <li><a href="register.html">Register</a></li>
-          <li><a href="index.html" aria-current="page">App</a></li>
-          <li><a href="plans.html">Plans</a></li>
-        </ul>
-        <a class="profile-link" href="profile.html" aria-label="Open profile page">
-          <span class="profile-icon" aria-hidden="true">👤</span>
-          <img id="nav-avatar" class="nav-avatar" src="assets/jeoq-logo.svg" alt="Profile picture" />
-        </a>
+    <section class="feed-column">
+      <div class="feed-switch">
+        <button class="feed-tab active" type="button">For You</button>
+        <button class="feed-tab" type="button">Following</button>
       </div>
-    </nav>
-  </header>
 
-  <main class="page-wrap">
-    <section class="hero card">
-      <h1>Comedy starts here.</h1>
-      <p>JEOQ is built for funny content and entertainment. Register on the separate register page, then log in to share and interact.</p>
+      <article class="video-post card-dark">
+        <div class="video-frame">
+          <div class="mock-video-label">Comedy Clip</div>
+          <p class="video-caption">"When your joke lands and you become the office legend."</p>
+        </div>
+        <div class="video-meta">
+          <p class="creator">@laugh_labs</p>
+          <p class="hashtags">#funny #comedy #jeoq</p>
+        </div>
+        <div class="video-actions">
+          <button class="action-btn" data-action="like">❤️ Like</button>
+          <button class="action-btn" data-action="favorite">⭐ Favorite</button>
+          <button class="action-btn" data-action="follow">➕ Follow</button>
+          <button class="action-btn" data-action="report-content">🚩 Report</button>
+        </div>
+      </article>
+
+      <article class="video-post card-dark">
+        <div class="video-frame alt">
+          <div class="mock-video-label">Sketch Post</div>
+          <p class="video-caption">"POV: you said one pun and now everyone avoids eye contact."</p>
+        </div>
+        <div class="video-meta">
+          <p class="creator">@meme_mic</p>
+          <p class="hashtags">#sketch #lol #creator</p>
+        </div>
+        <div class="video-actions">
+          <button class="action-btn" data-action="block-content">⛔ Block Content</button>
+          <button class="action-btn" data-action="report-creator">🚨 Report Creator</button>
+          <button class="action-btn" data-action="block-creator">🛑 Block Creator</button>
+          <button class="action-btn" data-action="unfollow">➖ Unfollow</button>
+        </div>
+      </article>
     </section>
 
-    <section class="card" id="actions">
-      <h2>Funny Content Actions</h2>
-      <p class="section-intro">People can like, favorite, block, and report content or creators. They can also follow or unfollow creators.</p>
-      <div class="action-grid">
-        <article class="item-box">
-          <h3>Content Actions</h3>
-          <div class="button-row">
-            <button class="action-btn" data-action="like">Like</button>
-            <button class="action-btn" data-action="favorite">Favorite</button>
-            <button class="action-btn" data-action="block-content">Block Content</button>
-            <button class="action-btn" data-action="report-content">Report Content</button>
-          </div>
-        </article>
-        <article class="item-box">
-          <h3>Creator Actions</h3>
-          <div class="button-row">
-            <button class="action-btn" data-action="follow">Follow</button>
-            <button class="action-btn" data-action="unfollow">Unfollow</button>
-            <button class="action-btn" data-action="block-creator">Block Creator</button>
-            <button class="action-btn" data-action="report-creator">Report Creator</button>
-          </div>
-        </article>
-      </div>
-    </section>
+    <aside class="right-rail">
+      <section class="card" id="publish">
+        <h2>Post New Content</h2>
+        <form class="publish-form" id="publish-form">
+          <label>
+            Content Type
+            <select name="type" required>
+              <option value="">Select one</option>
+              <option value="video">Video</option>
+              <option value="post">Post</option>
+              <option value="idea">Funny Idea</option>
+            </select>
+          </label>
+          <label>
+            Title
+            <input type="text" name="title" required />
+          </label>
+          <label>
+            Description
+            <textarea name="description" rows="4" required></textarea>
+          </label>
+          <button type="submit">Publish</button>
+        </form>
+      </section>
 
+      <section class="card creator-card">
+        <h3>Creator Quick Actions</h3>
+        <div class="button-row">
+          <button class="action-btn" data-action="follow">Follow</button>
+          <button class="action-btn" data-action="unfollow">Unfollow</button>
+          <button class="action-btn" data-action="favorite">Favorite</button>
+        </div>
+      </section>
+
+      <p class="status" id="status" aria-live="polite"></p>
+    </aside>
     <section class="card" id="publish">
       <h2>Publish Your Own Content</h2>
       <p class="section-intro">Users can publish funny videos, short posts, and entertainment updates.</p>

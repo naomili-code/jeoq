@@ -242,6 +242,21 @@ function bindPlanButtons() {
 	});
 }
 
+function bindFeedTabs() {
+	const tabs = document.querySelectorAll(".feed-tab");
+	if (tabs.length === 0) {
+		return;
+	}
+
+	tabs.forEach((tab) => {
+		tab.addEventListener("click", () => {
+			tabs.forEach((item) => item.classList.remove("active"));
+			tab.classList.add("active");
+			setStatus(status, `Switched to ${tab.textContent} feed.`);
+		});
+	});
+}
+
 function renderProfilePage() {
 	const profileCard = document.getElementById("profile-card");
 	if (!profileCard) {
@@ -321,4 +336,5 @@ bindAuthForms();
 bindContentActions();
 bindPublishForm();
 bindPlanButtons();
+bindFeedTabs();
 renderProfilePage();
