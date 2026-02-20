@@ -69,6 +69,21 @@
             Description
             <textarea name="description" rows="4" required></textarea>
           </label>
+          <div class="media-tools" aria-label="Video creation tools">
+            <label>
+              Upload Video
+              <input id="video-upload" type="file" name="videoFile" accept="video/*" />
+            </label>
+            <div class="media-actions" role="group" aria-label="Camera and microphone recording controls">
+              <button id="start-recording" type="button">Start Recording</button>
+              <button id="stop-recording" type="button" disabled>Stop Recording</button>
+              <button id="clear-media" type="button" class="clear-media-btn">Clear Video</button>
+            </div>
+            <p id="recording-status" class="status media-status" aria-live="polite"></p>
+            <div id="media-preview-wrap" class="media-preview-wrap is-hidden" aria-live="polite">
+              <video id="media-preview" class="media-preview" controls playsinline muted></video>
+            </div>
+          </div>
           <label>
             Hashtags
             <input type="text" name="hashtags" placeholder="#fyp #foryou #funny" />

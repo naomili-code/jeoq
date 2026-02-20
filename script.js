@@ -211,10 +211,17 @@ function renderFeed() {
 	const posts = getAllFeedContent();
 	feedList.innerHTML = posts
 		.map((post) => {
-			const frameClass = post.style === "alt" ? "video-frame alt" : "video-frame";
+			const hasMedia = Boolean(post.mediaDataUrl);
+			const frameClass = ["video-frame", post.style === "alt" ? "alt" : "", hasMedia ? "has-media" : ""]
+				.filter(Boolean)
+				.join(" ");
 			const hashtagHtml = (post.hashtags || []).map(tagLinkHtml).join(" ");
+			const mediaHtml = hasMedia
+				? `<video class="post-video" playsinline controls preload="metadata" src="${post.mediaDataUrl}"></video>`
+				: "";
 			return `<article class="video-post card-dark" data-content-id="${post.id}" data-content-title="${post.title}">
 				<div class="${frameClass}">
+					${mediaHtml}
 					<p class="video-caption">"${post.title}"</p>
 					<div class="video-side-actions">
 						<button class="action-btn icon-action" data-action="like" aria-label="Like">❤️</button>
@@ -234,6 +241,188 @@ function renderFeed() {
 			</article>`;
 		})
 		.join("");
+}
+
+function fileToDataUrl(fileLike) {
+	return new Promise((resolve, reject) => {
+		if (!fileLike) {
+			resolve("");
+			return;
+		}
+
+		const reader = new FileReader();
+		reader.onload = () => resolve(String(reader.result || ""));
+		reader.onerror = () => reject(new Error("Unable to read selected media."));
+		reader.readAsDataURL(fileLike);
+	});
+}
+
+function bindPublishMediaTools() {
+	const publishForm = document.getElementById("publish-form");
+	if (!publishForm || publishForm.dataset.mediaBound === "true") {
+		return;
+	}
+	publishForm.dataset.mediaBound = "true";
+
+	const uploadInput = document.getElementById("video-upload");
+	const startButton = document.getElementById("start-recording");
+	const stopButton = document.getElementById("stop-recording");
+	const clearButton = document.getElementById("clear-media");
+	const recordingStatus = document.getElementById("recording-status");
+	const previewWrap = document.getElementById("media-preview-wrap");
+	const preview = document.getElementById("media-preview");
+
+	if (!uploadInput || !startButton || !stopButton || !clearButton || !recordingStatus || !previewWrap || !preview) {
+		return;
+	}
+
+	const mediaState = {
+		uploadFile: null,
+		recordedDataUrl: "",
+		previewUrl: "",
+		stream: null,
+		recorder: null,
+		chunks: [],
+	};
+
+	window.__jeoqPublishMediaState = mediaState;
+
+	function clearPreviewUrl() {
+		if (mediaState.previewUrl) {
+			URL.revokeObjectURL(mediaState.previewUrl);
+			mediaState.previewUrl = "";
+		}
+	}
+
+	function stopTracks() {
+		if (mediaState.stream) {
+			mediaState.stream.getTracks().forEach((track) => track.stop());
+			mediaState.stream = null;
+		}
+	}
+
+	function showPreviewWithSrc(src, muted = false) {
+		preview.srcObject = null;
+		preview.src = src;
+		preview.muted = muted;
+		previewWrap.classList.remove("is-hidden");
+	}
+
+	function resetMediaSelection() {
+		mediaState.uploadFile = null;
+		mediaState.recordedDataUrl = "";
+		mediaState.chunks = [];
+		clearPreviewUrl();
+		preview.pause();
+		preview.removeAttribute("src");
+		preview.srcObject = null;
+		preview.load();
+		uploadInput.value = "";
+		previewWrap.classList.add("is-hidden");
+		setStatus(recordingStatus, "No video selected yet.");
+	}
+
+	async function stopRecording() {
+		if (!mediaState.recorder || mediaState.recorder.state === "inactive") {
+			return;
+		}
+
+		await new Promise((resolve) => {
+			mediaState.recorder.addEventListener("stop", resolve, { once: true });
+			mediaState.recorder.stop();
+		});
+
+		stopTracks();
+		startButton.disabled = false;
+		stopButton.disabled = true;
+
+		const blob = new Blob(mediaState.chunks, { type: "video/webm" });
+		mediaState.chunks = [];
+		if (!blob.size) {
+			setStatus(recordingStatus, "No recording data captured. Please try again.");
+			return;
+		}
+
+		clearPreviewUrl();
+		mediaState.previewUrl = URL.createObjectURL(blob);
+		showPreviewWithSrc(mediaState.previewUrl, false);
+		mediaState.recordedDataUrl = await fileToDataUrl(blob);
+		mediaState.uploadFile = null;
+		uploadInput.value = "";
+		setStatus(recordingStatus, "Recording ready. Publish to post this video.");
+	}
+
+	uploadInput.addEventListener("change", () => {
+		const selected = uploadInput.files?.[0] || null;
+		if (!selected) {
+			resetMediaSelection();
+			return;
+		}
+
+		stopTracks();
+		startButton.disabled = false;
+		stopButton.disabled = true;
+
+		mediaState.uploadFile = selected;
+		mediaState.recordedDataUrl = "";
+		clearPreviewUrl();
+		mediaState.previewUrl = URL.createObjectURL(selected);
+		showPreviewWithSrc(mediaState.previewUrl, true);
+		setStatus(recordingStatus, `Selected upload: ${selected.name}`);
+	});
+
+	startButton.addEventListener("click", async () => {
+		try {
+			stopTracks();
+			const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+			mediaState.stream = stream;
+			mediaState.recorder = new MediaRecorder(stream);
+			mediaState.chunks = [];
+			mediaState.uploadFile = null;
+			mediaState.recordedDataUrl = "";
+			uploadInput.value = "";
+			clearPreviewUrl();
+
+			mediaState.recorder.addEventListener("dataavailable", (event) => {
+				if (event.data && event.data.size > 0) {
+					mediaState.chunks.push(event.data);
+				}
+			});
+
+			preview.srcObject = stream;
+			preview.muted = true;
+			preview.play().catch(() => {});
+			previewWrap.classList.remove("is-hidden");
+			mediaState.recorder.start();
+			startButton.disabled = true;
+			stopButton.disabled = false;
+			setStatus(recordingStatus, "Recording in progress… click Stop Recording when done.");
+		} catch {
+			stopTracks();
+			setStatus(recordingStatus, "Could not access camera/microphone. Check browser permissions and try again.");
+		}
+	});
+
+	stopButton.addEventListener("click", () => {
+		stopRecording().catch(() => {
+			stopTracks();
+			startButton.disabled = false;
+			stopButton.disabled = true;
+			setStatus(recordingStatus, "Unable to finalize recording. Please try again.");
+		});
+	});
+
+	clearButton.addEventListener("click", () => {
+		stopTracks();
+		if (mediaState.recorder && mediaState.recorder.state !== "inactive") {
+			mediaState.recorder.stop();
+		}
+		startButton.disabled = false;
+		stopButton.disabled = true;
+		resetMediaSelection();
+	});
+
+	setStatus(recordingStatus, "No video selected yet.");
 }
 
 function getSavedItemsForUser(storageKey, userKey) {
@@ -398,7 +587,9 @@ function bindPublishForm() {
 		return;
 	}
 
-	publishForm.addEventListener("submit", (event) => {
+	bindPublishMediaTools();
+
+	publishForm.addEventListener("submit", async (event) => {
 		event.preventDefault();
 		const current = getCurrentUser();
 		if (!current) {
@@ -413,6 +604,24 @@ function bindPublishForm() {
 		const type = String(formData.get("type") || "video").trim();
 		const hashtags = parseHashtags(formData.get("hashtags") || "");
 		const creatorHandle = `@${current.data.username || current.key}`;
+		const mediaState = window.__jeoqPublishMediaState || {};
+
+		let mediaDataUrl = "";
+		if (mediaState.uploadFile) {
+			try {
+				mediaDataUrl = await fileToDataUrl(mediaState.uploadFile);
+			} catch {
+				setStatus(status, "Could not read selected video file. Please choose another file.");
+				return;
+			}
+		} else if (mediaState.recordedDataUrl) {
+			mediaDataUrl = mediaState.recordedDataUrl;
+		}
+
+		if (type === "video" && !mediaDataUrl) {
+			setStatus(status, "For video posts, upload a video or record one with camera and microphone.");
+			return;
+		}
 
 		const posts = loadPostList();
 		posts.unshift({
@@ -423,12 +632,52 @@ function bindPublishForm() {
 			hashtags: hashtags.length > 0 ? hashtags : ["#fyp"],
 			sound: type === "video" ? "office_legend" : "pov_pun",
 			style: posts.length % 2 === 0 ? "default" : "alt",
+			mediaDataUrl,
 		});
 		savePostList(posts);
 		renderFeed();
 
 		setStatus(status, "Content published to your creator profile.");
 		publishForm.reset();
+		if (mediaState && typeof mediaState === "object") {
+			mediaState.uploadFile = null;
+			mediaState.recordedDataUrl = "";
+			mediaState.chunks = [];
+			if (mediaState.previewUrl) {
+				URL.revokeObjectURL(mediaState.previewUrl);
+				mediaState.previewUrl = "";
+			}
+			if (mediaState.stream) {
+				mediaState.stream.getTracks().forEach((track) => track.stop());
+				mediaState.stream = null;
+			}
+			const uploadInput = document.getElementById("video-upload");
+			const preview = document.getElementById("media-preview");
+			const previewWrap = document.getElementById("media-preview-wrap");
+			const startButton = document.getElementById("start-recording");
+			const stopButton = document.getElementById("stop-recording");
+			const recordingStatus = document.getElementById("recording-status");
+
+			if (uploadInput) {
+				uploadInput.value = "";
+			}
+			if (preview) {
+				preview.pause();
+				preview.removeAttribute("src");
+				preview.srcObject = null;
+				preview.load();
+			}
+			if (previewWrap) {
+				previewWrap.classList.add("is-hidden");
+			}
+			if (startButton) {
+				startButton.disabled = false;
+			}
+			if (stopButton) {
+				stopButton.disabled = true;
+			}
+			setStatus(recordingStatus, "No video selected yet.");
+		}
 		if (publishPanel) {
 			publishPanel.classList.add("is-hidden");
 			publishPanel.setAttribute("aria-hidden", "true");
