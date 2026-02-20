@@ -163,6 +163,11 @@ body {
   color: #5b4063;
 }
 
+.text-link {
+  color: #9c3f00;
+  font-weight: 700;
+}
+
 h2,
 h3 {
   margin-top: 0;
