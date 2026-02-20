@@ -981,7 +981,27 @@ function renderHashtagPage() {
 
 	resultList.innerHTML = related
 		.map(
-			(post) => `<article class="saved-item"><p><strong>${post.title}</strong></p><p>Creator: <a class="creator-handle-link" href="creator.html?creator=${post.creatorKey}">${post.creator}</a></p><p>${(post.hashtags || []).map(tagLinkHtml).join(" ")}</p></article>`,
+			(post) => {
+				const hasMedia = Boolean(post.mediaDataUrl);
+				const frameClass = ["video-frame", post.style === "alt" ? "alt" : "", hasMedia ? "has-media" : ""]
+					.filter(Boolean)
+					.join(" ");
+				const mediaHtml = hasMedia
+					? `<video class="post-video" playsinline controls preload="metadata" src="${post.mediaDataUrl}"></video>`
+					: `<div class="no-video-placeholder" role="img" aria-label="No uploaded video">No uploaded video</div>`;
+
+				return `<article class="video-post card-dark hashtag-post">
+					<div class="${frameClass}">
+						${mediaHtml}
+						<p class="video-caption">"${post.title}"</p>
+					</div>
+					<div class="video-meta">
+						<p><strong>Creator:</strong> <a class="creator-link" href="creator.html?creator=${post.creatorKey}">${post.creator}</a></p>
+						<p><strong>Sound:</strong> ${getSoundLabel(post.sound)}</p>
+						<p class="hashtags">${(post.hashtags || []).map(tagLinkHtml).join(" ")}</p>
+					</div>
+				</article>`;
+			},
 		)
 		.join("");
 }
