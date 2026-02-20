@@ -17,10 +17,9 @@
 
       <div class="nav-right">
         <ul class="nav-links">
-          <li><a href="register.html">Register</a></li>
-          <li><a href="index.html" aria-current="page">App</a></li>
           <li><a href="plans.html">Plans</a></li>
         </ul>
+        <button id="open-publish" class="nav-plus-btn" type="button" aria-label="Create post or video">+</button>
         <a class="profile-link" href="profile.html" aria-label="Open profile page">
           <span class="profile-icon" aria-hidden="true">👤</span>
           <img id="nav-avatar" class="nav-avatar" src="assets/jeoq-logo.svg" alt="Profile picture" />
@@ -33,7 +32,7 @@
     <aside class="left-rail">
       <a href="#" class="rail-link active">For You</a>
       <a href="#" class="rail-link">Following</a>
-      <a href="#publish" class="rail-link">Create</a>
+      <a href="#" class="rail-link" data-open-publish="true">Create</a>
       <a href="plans.html" class="rail-link">Plans</a>
       <a href="profile.html" class="rail-link">Profile</a>
     </aside>
@@ -91,9 +90,6 @@
 
       <p class="status" id="status" aria-live="polite"></p>
     </aside>
-
-    <button id="open-publish" class="fab-plus" type="button" aria-label="Create post or video">+</button>
-
     <section id="publish-panel" class="publish-panel is-hidden" aria-hidden="true">
       <div class="publish-card card">
         <div class="publish-head">

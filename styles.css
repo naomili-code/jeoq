@@ -102,6 +102,16 @@ body {
   padding: 0.25rem 0.4rem;
 }
 
+.nav-plus-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  padding: 0;
+  font-size: 1.35rem;
+  line-height: 1;
+  background: var(--accent-2);
+}
+
 .profile-icon {
   font-size: 1rem;
 }
@@ -374,19 +384,15 @@ body {
   margin: 0.2rem 0;
 }
 
-.fab-plus {
-  position: fixed;
-  right: 1.25rem;
-  bottom: 1.25rem;
-  z-index: 45;
-  width: 56px;
-  height: 56px;
-  border-radius: 999px;
-  font-size: 2rem;
-  line-height: 1;
-  padding: 0;
-  background: var(--accent-2);
-  box-shadow: 0 8px 20px rgba(28, 10, 4, 0.25);
+.creator-handle-link {
+  color: #2f1b3a;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.creator-handle-link:hover,
+.creator-handle-link:focus-visible {
+  text-decoration: underline;
 }
 
 .publish-panel {
@@ -624,13 +630,6 @@ button:focus-visible {
     background: rgba(22, 19, 29, 0.96);
     border-top: 1px solid #3d3247;
     padding: 0.25rem;
-  }
-
-  .fab-plus {
-    right: 1rem;
-    bottom: 5.4rem;
-    width: 52px;
-    height: 52px;
   }
 
   .rail-link {

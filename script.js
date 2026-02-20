@@ -251,17 +251,20 @@ function bindPublishForm() {
 }
 
 function bindPublishToggle() {
-	const openButton = document.getElementById("open-publish");
+	const openButtons = document.querySelectorAll("#open-publish, [data-open-publish='true']");
 	const closeButton = document.getElementById("close-publish");
 	const publishPanel = document.getElementById("publish-panel");
 
-	if (!openButton || !publishPanel) {
+	if (openButtons.length === 0 || !publishPanel) {
 		return;
 	}
 
-	openButton.addEventListener("click", () => {
-		publishPanel.classList.remove("is-hidden");
-		publishPanel.setAttribute("aria-hidden", "false");
+	openButtons.forEach((button) => {
+		button.addEventListener("click", (event) => {
+			event.preventDefault();
+			publishPanel.classList.remove("is-hidden");
+			publishPanel.setAttribute("aria-hidden", "false");
+		});
 	});
 
 	if (closeButton) {
@@ -419,18 +422,28 @@ function renderCreatorPage() {
 	if (creatorFollowing) creatorFollowing.textContent = creator.following;
 	if (creatorPhoto) creatorPhoto.src = creator.avatar;
 
-	function fillPanel(panelId, items, prefix) {
+	function handleToCreatorKey(handle) {
+		return String(handle || "").replace(/^@/, "").toLowerCase();
+	}
+
+	function fillPanel(panelId, items, prefix, linkHandles = false) {
 		const panel = document.getElementById(panelId);
 		if (!panel) return;
+		const cards = items.map((item, index) => {
+			const value = linkHandles
+				? `<a class="creator-handle-link" href="creator.html?creator=${handleToCreatorKey(item)}">${item}</a>`
+				: item;
+			return `<article class="creator-item"><p><strong>${prefix} ${index + 1}</strong></p><p>${value}</p></article>`;
+		});
 		panel.innerHTML = items
-			.map((item, index) => `<article class="creator-item"><p><strong>${prefix} ${index + 1}</strong></p><p>${item}</p></article>`)
+			.map((_, index) => cards[index])
 			.join("");
 	}
 
 	fillPanel("creator-content", creator.content, "Content");
 	fillPanel("creator-reposts", creator.reposts, "Repost");
-	fillPanel("creator-following-list", creator.followingList, "Following");
-	fillPanel("creator-followers-list", creator.followersList, "Follower");
+	fillPanel("creator-following-list", creator.followingList, "Following", true);
+	fillPanel("creator-followers-list", creator.followersList, "Follower", true);
 
 	const tabs = document.querySelectorAll(".creator-tab");
 	tabs.forEach((tab) => {
