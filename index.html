@@ -80,8 +80,26 @@
     </section>
 
     <aside class="right-rail">
-      <section class="card" id="publish">
-        <h2>Post New Content</h2>
+      <section class="card creator-card">
+        <h3>Creator Quick Actions</h3>
+        <div class="button-row">
+          <button class="action-btn" data-action="follow">Follow</button>
+          <button class="action-btn" data-action="unfollow">Unfollow</button>
+          <button class="action-btn" data-action="favorite">Favorite</button>
+        </div>
+      </section>
+
+      <p class="status" id="status" aria-live="polite"></p>
+    </aside>
+
+    <button id="open-publish" class="fab-plus" type="button" aria-label="Create post or video">+</button>
+
+    <section id="publish-panel" class="publish-panel is-hidden" aria-hidden="true">
+      <div class="publish-card card">
+        <div class="publish-head">
+          <h2>Post New Content</h2>
+          <button id="close-publish" class="close-publish" type="button" aria-label="Close create panel">✕</button>
+        </div>
         <form class="publish-form" id="publish-form">
           <label>
             Content Type
@@ -102,19 +120,8 @@
           </label>
           <button type="submit">Publish</button>
         </form>
-      </section>
-
-      <section class="card creator-card">
-        <h3>Creator Quick Actions</h3>
-        <div class="button-row">
-          <button class="action-btn" data-action="follow">Follow</button>
-          <button class="action-btn" data-action="unfollow">Unfollow</button>
-          <button class="action-btn" data-action="favorite">Favorite</button>
-        </div>
-      </section>
-
-      <p class="status" id="status" aria-live="polite"></p>
-    </aside>
+      </div>
+    </section>
   </main>
 
   <script src="script.js"></script>

@@ -194,6 +194,7 @@ function bindContentActions() {
 
 function bindPublishForm() {
 	const publishForm = document.getElementById("publish-form");
+	const publishPanel = document.getElementById("publish-panel");
 	if (!publishForm) {
 		return;
 	}
@@ -209,6 +210,39 @@ function bindPublishForm() {
 		touchLogin(current.key);
 		setStatus(status, "Content published to your creator profile.");
 		publishForm.reset();
+		if (publishPanel) {
+			publishPanel.classList.add("is-hidden");
+			publishPanel.setAttribute("aria-hidden", "true");
+		}
+	});
+}
+
+function bindPublishToggle() {
+	const openButton = document.getElementById("open-publish");
+	const closeButton = document.getElementById("close-publish");
+	const publishPanel = document.getElementById("publish-panel");
+
+	if (!openButton || !publishPanel) {
+		return;
+	}
+
+	openButton.addEventListener("click", () => {
+		publishPanel.classList.remove("is-hidden");
+		publishPanel.setAttribute("aria-hidden", "false");
+	});
+
+	if (closeButton) {
+		closeButton.addEventListener("click", () => {
+			publishPanel.classList.add("is-hidden");
+			publishPanel.setAttribute("aria-hidden", "true");
+		});
+	}
+
+	publishPanel.addEventListener("click", (event) => {
+		if (event.target === publishPanel) {
+			publishPanel.classList.add("is-hidden");
+			publishPanel.setAttribute("aria-hidden", "true");
+		}
 	});
 }
 
@@ -335,6 +369,7 @@ ensureNewUsersStartAtRegister();
 bindAuthForms();
 bindContentActions();
 bindPublishForm();
+bindPublishToggle();
 bindPlanButtons();
 bindFeedTabs();
 renderProfilePage();

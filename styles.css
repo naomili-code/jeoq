@@ -291,6 +291,54 @@ body {
   margin-bottom: 0.55rem;
 }
 
+.fab-plus {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 45;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  font-size: 2rem;
+  line-height: 1;
+  padding: 0;
+  background: var(--accent-2);
+  box-shadow: 0 8px 20px rgba(28, 10, 4, 0.25);
+}
+
+.publish-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(19, 15, 27, 0.7);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.publish-card {
+  width: min(560px, 96vw);
+}
+
+.publish-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.close-publish {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  padding: 0;
+  background: #50395f;
+}
+
+.is-hidden {
+  display: none;
+}
+
 @media (max-width: 1000px) {
   .app-shell {
     grid-template-columns: 170px minmax(0, 1fr) 270px;
@@ -493,6 +541,13 @@ button:focus-visible {
     background: rgba(22, 19, 29, 0.96);
     border-top: 1px solid #3d3247;
     padding: 0.25rem;
+  }
+
+  .fab-plus {
+    right: 1rem;
+    bottom: 5.4rem;
+    width: 52px;
+    height: 52px;
   }
 
   .rail-link {
