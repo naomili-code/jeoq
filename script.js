@@ -44,6 +44,29 @@ const CREATOR_DIRECTORY = {
 	},
 };
 
+const SOUND_DIRECTORY = {
+	office_legend: {
+		name: "Office Legend Beat",
+		creator: "@laugh_labs",
+		icon: "assets/jeoq-logo.svg",
+		content: [
+			{ title: "Boardroom punchline challenge", creator: "@laugh_labs", likes: 284000 },
+			{ title: "When HR laughs first", creator: "@dailyhaha", likes: 220100 },
+			{ title: "Monday meeting comedy remix", creator: "@chucklequeen", likes: 176500 },
+		],
+	},
+	pov_pun: {
+		name: "POV Pun Track",
+		creator: "@meme_mic",
+		icon: "assets/jeoq-logo.svg",
+		content: [
+			{ title: "POV: you dropped a dad joke", creator: "@meme_mic", likes: 198400 },
+			{ title: "Pun battle in group chat", creator: "@snortclub", likes: 151200 },
+			{ title: "Relatable pun skit", creator: "@funstream", likes: 94700 },
+		],
+	},
+};
+
 function setStatus(target, message) {
 	if (target) {
 		target.textContent = message;
@@ -459,6 +482,38 @@ function renderCreatorPage() {
 	});
 }
 
+function renderSoundPage() {
+	const soundPage = document.getElementById("sound-page");
+	if (!soundPage) {
+		return;
+	}
+
+	const params = new URLSearchParams(window.location.search);
+	const soundKey = (params.get("sound") || "office_legend").toLowerCase();
+	const sound = SOUND_DIRECTORY[soundKey] || SOUND_DIRECTORY.office_legend;
+
+	const soundName = document.getElementById("sound-name");
+	const soundCreator = document.getElementById("sound-creator");
+	const soundPhoto = document.getElementById("sound-photo");
+	const soundCount = document.getElementById("sound-count");
+	const soundList = document.getElementById("sound-content-list");
+
+	if (soundName) soundName.textContent = sound.name;
+	if (soundCreator) soundCreator.textContent = `By ${sound.creator}`;
+	if (soundPhoto) soundPhoto.src = sound.icon;
+	if (soundCount) soundCount.textContent = String(sound.content.length);
+
+	if (soundList) {
+		const ranked = [...sound.content].sort((a, b) => b.likes - a.likes);
+		soundList.innerHTML = ranked
+			.map(
+				(item, index) =>
+					`<article class="sound-item"><p><strong>#${index + 1} ${item.title}</strong></p><p>Creator: <a class="creator-handle-link" href="creator.html?creator=${item.creator.replace("@", "")}">${item.creator}</a></p><p>Likes: ${item.likes.toLocaleString()}</p></article>`,
+			)
+			.join("");
+	}
+}
+
 updateNavAvatar();
 ensureNewUsersStartAtRegister();
 bindAuthForms();
@@ -469,3 +524,4 @@ bindPlanButtons();
 bindFeedTabs();
 renderProfilePage();
 renderCreatorPage();
+renderSoundPage();

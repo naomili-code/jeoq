@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JEOQ | Sound</title>
+  <meta name="description" content="Sound details and content list on JEOQ." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="brand" href="index.html" aria-label="JEOQ home">
+        <img src="assets/jeoq-logo.svg" alt="JEOQ logo" class="brand-logo" />
+        <span class="brand-text">JEOQ</span>
+      </a>
+
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="plans.html">Plans</a></li>
+        </ul>
+        <a class="profile-link" href="profile.html" aria-label="Open profile page">
+          <span class="profile-icon" aria-hidden="true">👤</span>
+          <img id="nav-avatar" class="nav-avatar" src="assets/jeoq-logo.svg" alt="Profile picture" />
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-wrap">
+    <section class="card sound-header" id="sound-page">
+      <div class="sound-head">
+        <img id="sound-photo" class="sound-photo" src="assets/jeoq-logo.svg" alt="Sound icon" />
+        <div>
+          <h1 id="sound-name">Sound Name</h1>
+          <p id="sound-creator" class="section-intro">By @creator</p>
+          <p class="section-intro"><strong id="sound-count">0</strong> contents made with this sound</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Content Using This Sound (Most Likes First)</h2>
+      <div id="sound-content-list" class="sound-list"></div>
+    </section>
+
+    <p class="status" id="status" aria-live="polite"></p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
