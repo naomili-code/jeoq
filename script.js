@@ -1,6 +1,7 @@
 const status = document.getElementById("status");
 const planStatus = document.getElementById("plan-status");
 const profileStatus = document.getElementById("profile-status");
+const authStatus = document.getElementById("auth-status");
 
 const STORAGE_KEYS = {
 	users: "jeoq-users",
@@ -26,6 +27,28 @@ function loadUsers() {
 		return raw ? JSON.parse(raw) : {};
 	} catch {
 		return {};
+	}
+}
+
+function getPageName() {
+	const path = window.location.pathname;
+	return path.substring(path.lastIndexOf("/") + 1) || "index.html";
+}
+
+function redirect(path) {
+	if (getPageName() !== path) {
+		window.location.href = path;
+	}
+}
+
+function ensureNewUsersStartAtRegister() {
+	const users = loadUsers();
+	const hasUsers = Object.keys(users).length > 0;
+	const page = getPageName();
+	const isRegisterPage = page === "register.html";
+
+	if (!hasUsers && !isRegisterPage) {
+		redirect("register.html");
 	}
 }
 
@@ -98,13 +121,13 @@ function bindAuthForms() {
 			const password = String(passwordInput?.value || "").trim();
 
 			if (!userKey || !password) {
-				setStatus(status, "Username and password are required.");
+				setStatus(authStatus, "Username and password are required.");
 				return;
 			}
 
 			if (mode === "register") {
 				if (users[userKey]) {
-					setStatus(status, "That username already exists. Please log in.");
+					setStatus(authStatus, "That username already exists. Please log in.");
 					return;
 				}
 
@@ -126,27 +149,29 @@ function bindAuthForms() {
 				saveUsers(users);
 				setCurrentUserKey(userKey);
 				updateNavAvatar();
-				setStatus(status, "Account created and verified. You are logged in on the Free plan.");
+				setStatus(authStatus, "Account created and verified. You are logged in on the Free plan.");
 				form.reset();
+				redirect("index.html");
 				return;
 			}
 
 			const account = users[userKey];
 			if (!account) {
-				setStatus(status, "Account not found. Please register first.");
+				setStatus(authStatus, "Account not found. Please register first.");
 				return;
 			}
 
 			if (account.password !== password) {
-				setStatus(status, "Incorrect username or password.");
+				setStatus(authStatus, "Incorrect username or password.");
 				return;
 			}
 
 			setCurrentUserKey(userKey);
 			touchLogin(userKey);
 			updateNavAvatar();
-			setStatus(status, "Login successful. Account verified.");
+			setStatus(authStatus, "Login successful. Account verified.");
 			form.reset();
+			redirect("index.html");
 		});
 	});
 }
@@ -291,6 +316,7 @@ function renderProfilePage() {
 }
 
 updateNavAvatar();
+ensureNewUsersStartAtRegister();
 bindAuthForms();
 bindContentActions();
 bindPublishForm();
