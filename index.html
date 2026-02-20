@@ -16,6 +16,10 @@
       </a>
 
       <div class="nav-right">
+        <form class="global-search" action="hashtags.html" method="get" role="search" aria-label="Search hashtags">
+          <input type="search" name="tag" placeholder="#fyp" aria-label="Search hashtags" />
+          <button type="submit" class="search-btn" aria-label="Search">🔍</button>
+        </form>
         <ul class="nav-links">
           <li><a href="saved.html">Saved</a></li>
           <li><a href="plans.html">Plans</a></li>
@@ -36,47 +40,7 @@
         <button class="feed-tab" type="button">Following</button>
       </div>
 
-      <article class="video-post card-dark" data-content-id="office-legend-clip" data-content-title="When your joke lands and you become the office legend.">
-        <div class="video-frame">
-          <div class="mock-video-label">Comedy Clip</div>
-          <p class="video-caption">"When your joke lands and you become the office legend."</p>
-          <div class="video-side-actions">
-            <button class="action-btn icon-action" data-action="like" aria-label="Like">❤️</button>
-            <button class="action-btn icon-action" data-action="favorite" aria-label="Favorite">⭐</button>
-          </div>
-          <a class="sound-link" href="sound.html?sound=office_legend" aria-label="Open sound page for Office Legend beat">
-            <img src="assets/jeoq-logo.svg" alt="Sound icon" class="sound-icon" />
-          </a>
-        </div>
-        <div class="video-meta">
-          <div class="creator-row">
-            <p class="creator"><a class="creator-link" href="creator.html?creator=laugh_labs">@laugh_labs</a></p>
-            <button class="action-btn follow-plus-btn" data-action="follow" aria-label="Follow creator">+</button>
-          </div>
-          <p class="hashtags">#funny #comedy #jeoq</p>
-        </div>
-      </article>
-
-      <article class="video-post card-dark" data-content-id="pov-pun-sketch" data-content-title="POV: you said one pun and now everyone avoids eye contact.">
-        <div class="video-frame alt">
-          <div class="mock-video-label">Sketch Post</div>
-          <p class="video-caption">"POV: you said one pun and now everyone avoids eye contact."</p>
-          <div class="video-side-actions">
-            <button class="action-btn icon-action" data-action="like" aria-label="Like">❤️</button>
-            <button class="action-btn icon-action" data-action="favorite" aria-label="Favorite">⭐</button>
-          </div>
-          <a class="sound-link" href="sound.html?sound=pov_pun" aria-label="Open sound page for POV Pun track">
-            <img src="assets/jeoq-logo.svg" alt="Sound icon" class="sound-icon" />
-          </a>
-        </div>
-        <div class="video-meta">
-          <div class="creator-row">
-            <p class="creator"><a class="creator-link" href="creator.html?creator=meme_mic">@meme_mic</a></p>
-            <button class="action-btn follow-plus-btn" data-action="follow" aria-label="Follow creator">+</button>
-          </div>
-          <p class="hashtags">#sketch #lol #creator</p>
-        </div>
-      </article>
+      <div id="feed-list"></div>
 
       <p class="status feed-status" id="status" aria-live="polite"></p>
     </section>
@@ -104,6 +68,10 @@
           <label>
             Description
             <textarea name="description" rows="4" required></textarea>
+          </label>
+          <label>
+            Hashtags
+            <input type="text" name="hashtags" placeholder="#fyp #foryou #funny" />
           </label>
           <button type="submit">Publish</button>
         </form>

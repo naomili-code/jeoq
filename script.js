@@ -8,6 +8,7 @@ const STORAGE_KEYS = {
 	currentUser: "jeoq-current-user",
 	liked: "jeoq-liked-items",
 	favorited: "jeoq-favorited-items",
+	posts: "jeoq-posts",
 };
 
 const STALE_DAYS = 14;
@@ -68,6 +69,27 @@ const SOUND_DIRECTORY = {
 		],
 	},
 };
+
+const DEFAULT_FEED_CONTENT = [
+	{
+		id: "office-legend-clip",
+		title: "When your joke lands and you become the office legend.",
+		creator: "@laugh_labs",
+		creatorKey: "laugh_labs",
+		hashtags: ["#funny", "#comedy", "#jeoq", "#fyp"],
+		sound: "office_legend",
+		style: "default",
+	},
+	{
+		id: "pov-pun-sketch",
+		title: "POV: you said one pun and now everyone avoids eye contact.",
+		creator: "@meme_mic",
+		creatorKey: "meme_mic",
+		hashtags: ["#sketch", "#lol", "#creator", "#foryoupage"],
+		sound: "pov_pun",
+		style: "alt",
+	},
+];
 
 function setStatus(target, message) {
 	if (target) {
@@ -142,6 +164,76 @@ function loadMapStorage(key) {
 
 function saveMapStorage(key, value) {
 	localStorage.setItem(key, JSON.stringify(value));
+}
+
+function loadPostList() {
+	const posts = loadMapStorage(STORAGE_KEYS.posts);
+	return Array.isArray(posts) ? posts : [];
+}
+
+function savePostList(posts) {
+	saveMapStorage(STORAGE_KEYS.posts, posts);
+}
+
+function normalizeTag(tag) {
+	return String(tag || "").replace(/^#/, "").trim().toLowerCase();
+}
+
+function parseHashtags(text) {
+	const tags = String(text || "")
+		.match(/#?[a-zA-Z0-9_]+/g)
+		?.map((item) => `#${normalizeTag(item)}`)
+		.filter((item) => item.length > 1) || [];
+
+	return Array.from(new Set(tags));
+}
+
+function getAllFeedContent() {
+	const userPosts = loadPostList();
+	return [...userPosts, ...DEFAULT_FEED_CONTENT];
+}
+
+function getSoundLabel(soundKey) {
+	return SOUND_DIRECTORY[soundKey]?.name || "Sound";
+}
+
+function tagLinkHtml(tag) {
+	const normalized = normalizeTag(tag);
+	return `<a class="hashtag-link" href="hashtags.html?tag=${encodeURIComponent(normalized)}">#${normalized}</a>`;
+}
+
+function renderFeed() {
+	const feedList = document.getElementById("feed-list");
+	if (!feedList) {
+		return;
+	}
+
+	const posts = getAllFeedContent();
+	feedList.innerHTML = posts
+		.map((post) => {
+			const frameClass = post.style === "alt" ? "video-frame alt" : "video-frame";
+			const hashtagHtml = (post.hashtags || []).map(tagLinkHtml).join(" ");
+			return `<article class="video-post card-dark" data-content-id="${post.id}" data-content-title="${post.title}">
+				<div class="${frameClass}">
+					<p class="video-caption">"${post.title}"</p>
+					<div class="video-side-actions">
+						<button class="action-btn icon-action" data-action="like" aria-label="Like">❤️</button>
+						<button class="action-btn icon-action" data-action="favorite" aria-label="Favorite">⭐</button>
+					</div>
+					<a class="sound-link" href="sound.html?sound=${post.sound}" aria-label="Open sound page for ${getSoundLabel(post.sound)}">
+						<img src="assets/jeoq-logo.svg" alt="Sound icon" class="sound-icon" />
+					</a>
+				</div>
+				<div class="video-meta">
+					<div class="creator-row">
+						<p class="creator"><a class="creator-link" href="creator.html?creator=${post.creatorKey}">${post.creator}</a></p>
+						<button class="action-btn follow-plus-btn" data-action="follow" aria-label="Follow creator">+</button>
+					</div>
+					<p class="hashtags">${hashtagHtml}</p>
+				</div>
+			</article>`;
+		})
+		.join("");
 }
 
 function getSavedItemsForUser(storageKey, userKey) {
@@ -259,31 +351,43 @@ function bindAuthForms() {
 }
 
 function bindContentActions() {
-	document.querySelectorAll(".action-btn").forEach((button) => {
-		button.addEventListener("click", () => {
-			const current = getCurrentUser();
-			if (!current) {
-				setStatus(status, "Please register or log in first.");
-				return;
-			}
+	if (window.__jeoqActionsBound) {
+		return;
+	}
+	window.__jeoqActionsBound = true;
 
-			touchLogin(current.key);
-			const actionKey = button.dataset.action || "";
-			const post = button.closest(".video-post");
-			if (post && (actionKey === "like" || actionKey === "favorite")) {
-				const contentId = post.dataset.contentId || "unknown";
-				const contentTitle = post.dataset.contentTitle || "Untitled content";
-				const storageKey = actionKey === "like" ? STORAGE_KEYS.liked : STORAGE_KEYS.favorited;
-				const existing = getSavedItemsForUser(storageKey, current.key);
-				if (!existing.some((item) => item.id === contentId)) {
-					existing.push({ id: contentId, title: contentTitle });
-					setSavedItemsForUser(storageKey, current.key, existing);
-				}
-			}
+	document.addEventListener("click", (event) => {
+		const button = event.target.closest(".action-btn");
+		if (!button) {
+			return;
+		}
 
-			const action = actionKey.replace(/-/g, " ");
-			setStatus(status, `Action received: ${action}.`);
-		});
+		const actionKey = button.dataset.action || "";
+		if (!actionKey) {
+			return;
+		}
+
+		const current = getCurrentUser();
+		if (!current) {
+			setStatus(status, "Please register or log in first.");
+			return;
+		}
+
+		touchLogin(current.key);
+		const post = button.closest(".video-post");
+		if (post && (actionKey === "like" || actionKey === "favorite")) {
+			const contentId = post.dataset.contentId || "unknown";
+			const contentTitle = post.dataset.contentTitle || "Untitled content";
+			const storageKey = actionKey === "like" ? STORAGE_KEYS.liked : STORAGE_KEYS.favorited;
+			const existing = getSavedItemsForUser(storageKey, current.key);
+			if (!existing.some((item) => item.id === contentId)) {
+				existing.push({ id: contentId, title: contentTitle });
+				setSavedItemsForUser(storageKey, current.key, existing);
+			}
+		}
+
+		const action = actionKey.replace(/-/g, " ");
+		setStatus(status, `Action received: ${action}.`);
 	});
 }
 
@@ -303,6 +407,26 @@ function bindPublishForm() {
 		}
 
 		touchLogin(current.key);
+		const formData = new FormData(publishForm);
+		const title = String(formData.get("title") || "").trim();
+		const description = String(formData.get("description") || "").trim();
+		const type = String(formData.get("type") || "video").trim();
+		const hashtags = parseHashtags(formData.get("hashtags") || "");
+		const creatorHandle = `@${current.data.username || current.key}`;
+
+		const posts = loadPostList();
+		posts.unshift({
+			id: `post-${Date.now()}`,
+			title: description || title || "New post",
+			creator: creatorHandle,
+			creatorKey: normalizeUsername(current.data.username || current.key),
+			hashtags: hashtags.length > 0 ? hashtags : ["#fyp"],
+			sound: type === "video" ? "office_legend" : "pov_pun",
+			style: posts.length % 2 === 0 ? "default" : "alt",
+		});
+		savePostList(posts);
+		renderFeed();
+
 		setStatus(status, "Content published to your creator profile.");
 		publishForm.reset();
 		if (publishPanel) {
@@ -585,6 +709,34 @@ function renderSavedPage() {
 	renderItems(favoriteList, favoriteItems, "Favorite");
 }
 
+function renderHashtagPage() {
+	const resultList = document.getElementById("hashtag-results");
+	const title = document.getElementById("hashtag-title");
+	if (!resultList || !title) {
+		return;
+	}
+
+	const params = new URLSearchParams(window.location.search);
+	const rawTag = params.get("tag") || "fyp";
+	const tag = normalizeTag(rawTag);
+	title.textContent = `#${tag}`;
+
+	const related = getAllFeedContent().filter((post) =>
+		(post.hashtags || []).map(normalizeTag).includes(tag),
+	);
+
+	if (related.length === 0) {
+		resultList.innerHTML = `<p class="saved-empty">No posts found for #${tag} yet.</p>`;
+		return;
+	}
+
+	resultList.innerHTML = related
+		.map(
+			(post) => `<article class="saved-item"><p><strong>${post.title}</strong></p><p>Creator: <a class="creator-handle-link" href="creator.html?creator=${post.creatorKey}">${post.creator}</a></p><p>${(post.hashtags || []).map(tagLinkHtml).join(" ")}</p></article>`,
+		)
+		.join("");
+}
+
 updateNavAvatar();
 ensureNewUsersStartAtRegister();
 bindAuthForms();
@@ -597,3 +749,5 @@ renderProfilePage();
 renderCreatorPage();
 renderSoundPage();
 renderSavedPage();
+renderFeed();
+renderHashtagPage();
