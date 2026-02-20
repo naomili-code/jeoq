@@ -272,6 +272,16 @@ body {
   font-weight: 800;
 }
 
+.creator-link {
+  color: #f5f8ff;
+  text-decoration: none;
+}
+
+.creator-link:hover,
+.creator-link:focus-visible {
+  text-decoration: underline;
+}
+
 .hashtags {
   color: #c7daff;
 }
@@ -289,6 +299,79 @@ body {
 
 .creator-card h3 {
   margin-bottom: 0.55rem;
+}
+
+.creator-header {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.creator-top {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.creator-photo {
+  width: 92px;
+  height: 92px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  background: #fff;
+}
+
+.creator-top h1 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.creator-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.creator-stats p {
+  margin: 0;
+}
+
+.creator-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.creator-tab {
+  background: #8ecae6;
+  color: #163547;
+}
+
+.creator-tab.active {
+  background: var(--accent-2);
+  color: #fff;
+}
+
+.creator-panel {
+  display: none;
+}
+
+.creator-panel.active {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.creator-item {
+  border: 1px solid #e5cfaf;
+  border-radius: 12px;
+  background: #fffdf7;
+  padding: 0.7rem;
+}
+
+.creator-item p {
+  margin: 0.2rem 0;
 }
 
 .fab-plus {
@@ -603,5 +686,9 @@ button:focus-visible {
 
   .profile-head {
     flex-direction: column;
+  }
+
+  .creator-top {
+    align-items: flex-start;
   }
 }

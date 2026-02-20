@@ -11,6 +11,39 @@ const STORAGE_KEYS = {
 const STALE_DAYS = 14;
 const STALE_MS = STALE_DAYS * 24 * 60 * 60 * 1000;
 
+const CREATOR_DIRECTORY = {
+	laugh_labs: {
+		name: "@laugh_labs",
+		bio: "Daily comedy bits, sketches, and funny office moments.",
+		followers: "1.8M",
+		following: "124",
+		avatar: "assets/jeoq-logo.svg",
+		content: [
+			"When your boss laughs at your joke and forgets the deadline.",
+			"Trying stand-up jokes on coworkers at 9AM.",
+			"Behind the scenes of a comedy skit shoot.",
+		],
+		reposts: ["Top 10 prank reactions this week.", "Comedy duet with @meme_mic."],
+		followingList: ["@meme_mic", "@giggle_factory", "@pun_parade"],
+		followersList: ["@chucklequeen", "@dailyhaha", "@rofl_agent"],
+	},
+	meme_mic: {
+		name: "@meme_mic",
+		bio: "POV sketches and relatable funny content every day.",
+		followers: "920K",
+		following: "301",
+		avatar: "assets/jeoq-logo.svg",
+		content: [
+			"POV: You made one joke and now lead every meeting icebreaker.",
+			"The friend who sends memes at 3AM.",
+			"Expectation vs reality: being funny on camera.",
+		],
+		reposts: ["Best laugh challenge clips.", "Office humor collab highlights."],
+		followingList: ["@laugh_labs", "@comedyloop", "@mirthhub"],
+		followersList: ["@snortclub", "@jokebox", "@funstream"],
+	},
+};
+
 function setStatus(target, message) {
 	if (target) {
 		target.textContent = message;
@@ -364,6 +397,55 @@ function renderProfilePage() {
 	});
 }
 
+function renderCreatorPage() {
+	const creatorPage = document.getElementById("creator-page");
+	if (!creatorPage) {
+		return;
+	}
+
+	const params = new URLSearchParams(window.location.search);
+	const creatorKey = (params.get("creator") || "laugh_labs").replace("@", "").toLowerCase();
+	const creator = CREATOR_DIRECTORY[creatorKey] || CREATOR_DIRECTORY.laugh_labs;
+
+	const creatorName = document.getElementById("creator-name");
+	const creatorBio = document.getElementById("creator-bio");
+	const creatorFollowers = document.getElementById("creator-followers");
+	const creatorFollowing = document.getElementById("creator-following");
+	const creatorPhoto = document.getElementById("creator-photo");
+
+	if (creatorName) creatorName.textContent = creator.name;
+	if (creatorBio) creatorBio.textContent = creator.bio;
+	if (creatorFollowers) creatorFollowers.textContent = creator.followers;
+	if (creatorFollowing) creatorFollowing.textContent = creator.following;
+	if (creatorPhoto) creatorPhoto.src = creator.avatar;
+
+	function fillPanel(panelId, items, prefix) {
+		const panel = document.getElementById(panelId);
+		if (!panel) return;
+		panel.innerHTML = items
+			.map((item, index) => `<article class="creator-item"><p><strong>${prefix} ${index + 1}</strong></p><p>${item}</p></article>`)
+			.join("");
+	}
+
+	fillPanel("creator-content", creator.content, "Content");
+	fillPanel("creator-reposts", creator.reposts, "Repost");
+	fillPanel("creator-following-list", creator.followingList, "Following");
+	fillPanel("creator-followers-list", creator.followersList, "Follower");
+
+	const tabs = document.querySelectorAll(".creator-tab");
+	tabs.forEach((tab) => {
+		tab.addEventListener("click", () => {
+			tabs.forEach((item) => item.classList.remove("active"));
+			document.querySelectorAll(".creator-panel").forEach((panel) => panel.classList.remove("active"));
+			tab.classList.add("active");
+			const target = document.getElementById(tab.dataset.target || "");
+			if (target) {
+				target.classList.add("active");
+			}
+		});
+	});
+}
+
 updateNavAvatar();
 ensureNewUsersStartAtRegister();
 bindAuthForms();
@@ -373,3 +455,4 @@ bindPublishToggle();
 bindPlanButtons();
 bindFeedTabs();
 renderProfilePage();
+renderCreatorPage();
