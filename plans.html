@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JEOQ | Plans</title>
+  <meta name="description" content="Choose a Free or Paid JEOQ plan." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="brand" href="index.html" aria-label="JEOQ home">
+        <img src="assets/jeoq-logo.svg" alt="JEOQ logo" class="brand-logo" />
+        <span class="brand-text">JEOQ</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">App</a></li>
+        <li><a href="plans.html" aria-current="page">Plans</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-wrap">
+    <section class="hero card">
+      <h1>Choose Your Plan</h1>
+      <p>This tab is only for plan options and purchase actions.</p>
+    </section>
+
+    <section class="plan-grid">
+      <article class="card plan-card">
+        <h2>Free Plan</h2>
+        <p class="price">$0 / month</p>
+        <ul>
+          <li>Default plan for all new users</li>
+          <li>Watch and post funny content</li>
+          <li>Like, favorite, follow, report, and block tools</li>
+        </ul>
+        <button class="plan-btn" data-plan="free">Use Free Plan</button>
+      </article>
+
+      <article class="card plan-card featured">
+        <h2>Paid Plan (Business)</h2>
+        <p class="price">$49 / month</p>
+        <ul>
+          <li>For companies and business teams</li>
+          <li>Funny marketing idea prompts</li>
+          <li>Comedy-style content concepts for campaigns</li>
+        </ul>
+        <button class="plan-btn" data-plan="paid">Buy Paid Plan</button>
+      </article>
+    </section>
+
+    <p class="status" id="plan-status" aria-live="polite"></p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

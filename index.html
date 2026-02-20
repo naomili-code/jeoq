@@ -10,23 +10,111 @@
 <body>
   <header class="site-header">
     <nav class="navbar" aria-label="Main navigation">
-      <a class="brand" href="#" aria-label="JEOQ home">
+      <a class="brand" href="index.html" aria-label="JEOQ home">
         <img src="assets/jeoq-logo.svg" alt="JEOQ logo" class="brand-logo" />
         <span class="brand-text">JEOQ</span>
       </a>
 
       <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Jokes</a></li>
-        <li><a href="#">Videos</a></li>
-        <li><a href="#">About</a></li>
+        <li><a href="index.html" aria-current="page">App</a></li>
+        <li><a href="plans.html">Plans</a></li>
       </ul>
     </nav>
   </header>
 
-  <main class="hero">
-    <h1>Comedy starts here.</h1>
-    <p>Navbar and logo are ready. Next, we can build pages and features for your comedy brand.</p>
+  <main class="page-wrap">
+    <section class="hero card">
+      <h1>Comedy starts here.</h1>
+      <p>JEOQ is built for funny content and entertainment. Users can register, log in, share posts/videos, and interact with creators and content.</p>
+    </section>
+
+    <section class="card" id="auth">
+      <h2>Account Access</h2>
+      <p class="section-intro">New users are automatically on the Free plan after sign up.</p>
+      <div class="auth-grid">
+        <form class="auth-form" data-auth="register">
+          <h3>Register</h3>
+          <label>
+            Name
+            <input type="text" name="name" required />
+          </label>
+          <label>
+            Email
+            <input type="email" name="email" required />
+          </label>
+          <label>
+            Password
+            <input type="password" name="password" required />
+          </label>
+          <button type="submit">Create Account (Free)</button>
+        </form>
+
+        <form class="auth-form" data-auth="login">
+          <h3>Log In</h3>
+          <label>
+            Email
+            <input type="email" name="email" required />
+          </label>
+          <label>
+            Password
+            <input type="password" name="password" required />
+          </label>
+          <button type="submit">Log In</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="card" id="actions">
+      <h2>Funny Content Actions</h2>
+      <p class="section-intro">People can like, favorite, block, and report content or creators. They can also follow or unfollow creators.</p>
+      <div class="action-grid">
+        <article class="item-box">
+          <h3>Content Actions</h3>
+          <div class="button-row">
+            <button class="action-btn" data-action="like">Like</button>
+            <button class="action-btn" data-action="favorite">Favorite</button>
+            <button class="action-btn" data-action="block-content">Block Content</button>
+            <button class="action-btn" data-action="report-content">Report Content</button>
+          </div>
+        </article>
+        <article class="item-box">
+          <h3>Creator Actions</h3>
+          <div class="button-row">
+            <button class="action-btn" data-action="follow">Follow</button>
+            <button class="action-btn" data-action="unfollow">Unfollow</button>
+            <button class="action-btn" data-action="block-creator">Block Creator</button>
+            <button class="action-btn" data-action="report-creator">Report Creator</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="card" id="publish">
+      <h2>Publish Your Own Content</h2>
+      <p class="section-intro">Users can publish funny videos, short posts, and entertainment updates.</p>
+      <form class="publish-form" id="publish-form">
+        <label>
+          Content Type
+          <select name="type" required>
+            <option value="">Select one</option>
+            <option value="video">Video</option>
+            <option value="post">Post</option>
+            <option value="idea">Funny Idea</option>
+          </select>
+        </label>
+        <label>
+          Title
+          <input type="text" name="title" required />
+        </label>
+        <label>
+          Description
+          <textarea name="description" rows="4" required></textarea>
+        </label>
+        <button type="submit">Publish Content</button>
+      </form>
+    </section>
+
+    <p class="status" id="status" aria-live="polite"></p>
   </main>
 
   <script src="script.js"></script>
