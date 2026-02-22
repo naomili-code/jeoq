@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JEOQ | Creator</title>
+  <meta name="description" content="Creator profile and content on JEOQ." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="back-to-feed" href="index.html" aria-label="Back to videos">&lt;</a>
+      <a class="brand" href="index.html" aria-label="JEOQ home">
+        <img src="assets/jeoq-logo.svg" alt="JEOQ logo" class="brand-logo" />
+        <span class="brand-text">JEOQ</span>
+      </a>
+
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="saved.html">Saved</a></li>
+          <li><a href="plans.html">Plans</a></li>
+        </ul>
+        <a class="profile-link" href="profile.html" aria-label="Open profile page">
+          <span class="profile-icon" aria-hidden="true">👤</span>
+          <img id="nav-avatar" class="nav-avatar" src="assets/jeoq-logo.svg" alt="Profile picture" />
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-wrap">
+    <section class="card creator-header" id="creator-page">
+      <div class="creator-top">
+        <img id="creator-photo" class="creator-photo" src="assets/jeoq-logo.svg" alt="Creator profile picture" />
+        <div>
+          <h1 id="creator-name">@creator</h1>
+          <p id="creator-bio" class="section-intro">Funny creator bio.</p>
+        </div>
+      </div>
+
+      <div class="creator-stats">
+        <p><strong id="creator-followers">0</strong> Followers</p>
+        <p><strong id="creator-following">0</strong> Following</p>
+      </div>
+
+      <div class="button-row">
+        <button class="action-btn" data-action="follow">Follow</button>
+        <button class="action-btn" data-action="unfollow">Unfollow</button>
+        <button class="action-btn" data-action="block-creator">Block Creator</button>
+        <button class="action-btn" data-action="report-creator">Report Creator</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="creator-tabs">
+        <button class="creator-tab active" data-target="creator-content" type="button">Content</button>
+        <button class="creator-tab" data-target="creator-reposts" type="button">Reposts</button>
+        <button class="creator-tab" data-target="creator-following-list" type="button">Following</button>
+        <button class="creator-tab" data-target="creator-followers-list" type="button">Followers</button>
+      </div>
+
+      <div id="creator-content" class="creator-panel active"></div>
+      <div id="creator-reposts" class="creator-panel"></div>
+      <div id="creator-following-list" class="creator-panel"></div>
+      <div id="creator-followers-list" class="creator-panel"></div>
+    </section>
+
+    <p class="status" id="status" aria-live="polite"></p>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Site navigation">
+    <a class="bnav-item" href="index.html" aria-label="Home feed">
+      <span class="bnav-icon">🏠</span>
+      <span class="bnav-label">Home</span>
+    </a>
+    <a class="bnav-item bnav-active" href="hashtags.html" aria-label="Discover hashtags">
+      <span class="bnav-icon">🔍</span>
+      <span class="bnav-label">Discover</span>
+    </a>
+    <a class="bnav-create-btn" href="index.html" aria-label="Create post or video">
+      <span class="bnav-create-icon">＋</span>
+    </a>
+    <a class="bnav-item" href="saved.html" aria-label="Saved content">
+      <span class="bnav-icon">⭐</span>
+      <span class="bnav-label">Saved</span>
+    </a>
+    <a class="bnav-item" href="profile.html" aria-label="Your profile">
+      <img class="bnav-avatar" src="assets/jeoq-logo.svg" alt="Profile picture" />
+      <span class="bnav-label">Profile</span>
+    </a>
+  </nav>
+
+  <script src="script.js"></script>
+</body>
+</html>

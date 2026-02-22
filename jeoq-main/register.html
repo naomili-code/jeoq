@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JEOQ | Register</title>
+  <meta name="description" content="Register or log in to JEOQ." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="auth-only-body">
+  <main class="auth-only-wrap">
+    <a class="auth-brand" href="index.html" aria-label="JEOQ home">
+      <img src="assets/jeoq-logo.svg" alt="JEOQ logo" class="auth-brand-logo" />
+      <span class="auth-brand-name">JEOQ</span>
+      <p class="auth-brand-tagline">Comedy &amp; Funny Things</p>
+    </a>
+
+    <section class="card" id="auth">
+      <h1>Start with Registration</h1>
+      <p class="section-intro">This is the first and only screen for brand-new users. New accounts are automatically created on the Free plan.</p>
+      <form class="auth-form" data-auth="register">
+        <label>
+          Username
+          <input type="text" name="username" required />
+        </label>
+        <label>
+          Name
+          <input type="text" name="name" required />
+        </label>
+        <label>
+          Email
+          <input type="email" name="email" required />
+        </label>
+        <label>
+          Password
+          <input type="password" name="password" required />
+        </label>
+        <button type="submit">Create Account</button>
+      </form>
+      <p class="section-intro">Existing user? <a href="login.html" class="text-link">Log in here</a>.</p>
+      <p class="section-intro">Already using JEOQ? Visit <a href="saved.html" class="text-link">Saved</a> after login.</p>
+    </section>
+
+    <p class="status" id="auth-status" aria-live="polite"></p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
